@@ -1,0 +1,136 @@
+*****************************************
+How the application is generated?********
+*****************************************
+
+
+path: \jhipter-microservice-arch\microserver-gateway>yo jhipster
+
+
+        ██╗ ██╗   ██╗ ████████╗ ███████╗   ██████╗ ████████╗ ████████╗ ███████╗
+        ██║ ██║   ██║ ╚══██╔══╝ ██╔═══██╗ ██╔════╝ ╚══██╔══╝ ██╔═════╝ ██╔═══██╗
+        ██║ ████████║    ██║    ███████╔╝ ╚█████╗     ██║    ██████╗   ███████╔╝
+  ██╗   ██║ ██╔═══██║    ██║    ██╔════╝   ╚═══██╗    ██║    ██╔═══╝   ██╔══██║
+  ╚██████╔╝ ██║   ██║ ████████╗ ██║       ██████╔╝    ██║    ████████╗ ██║  ╚██╗
+   ╚═════╝  ╚═╝   ╚═╝ ╚═══════╝ ╚═╝       ╚═════╝     ╚═╝    ╚═══════╝ ╚═╝   ╚═╝
+
+                            http://www.jhipster.tech
+
+Welcome to the JHipster Generator v4.9.0
+Documentation for creating an application: http://www.jhipster.tech/creating-an-app/
+Application files will be generated in folder: C:\Users\hassnan.ali\Desktop\jhipter-microservice-arch\microserver-gateway
+ ______________________________________________________________________________
+
+  JHipster update available: 4.10.0 (current: 4.9.0)
+
+  Run yarn global upgrade generator-jhipster to update.
+
+ ______________________________________________________________________________
+
+? (1/16) Which *type* of application would you like to create? Microservice gateway
+? (2/16) What is the base name of your application? msgateway
+? (3/16) As you are running in a microservice architecture, on which port would like your server to run? It should be unique to avoid port conflicts.
+ 8080
+? (4/16) What is your default Java package name? com.itob
+? (5/16) Do you want to use the JHipster Registry to configure, monitor and scale your microservices and gateways? Yes
+? (6/16) Which *type* of authentication would you like to use? Authentication with JHipster UAA server (the server must be generated separately)
+? (7/16) What is the folder path of your UAA application? ../oauthserver
+? (8/16) Which *type* of database would you like to use? SQL (H2, MySQL, MariaDB, PostgreSQL, Oracle)
+? (9/16) Which *production* database would you like to use? Oracle (Please follow our documentation to use the Oracle proprietary driver)
+? (10/16) Which *development* database would you like to use? Oracle 12c
+? (11/16) Would you like to use Maven or Gradle for building the backend? Maven
+? (12/16) Which other technologies would you like to use? API first development using swagger-codegen
+? (13/16) Which *Framework* would you like to use for the client? Angular 4
+? (14/16) Would you like to use the LibSass stylesheet preprocessor for your CSS? Yes
+? (15/16) Would you like to enable internationalization support? Yes
+? Please choose the native language of the application English
+? Please choose additional languages to install French
+? (16/16) Besides JUnit and Karma, which testing frameworks would you like to use? Gatling, Cucumber, Protractor
+? (17/16) Would you like to install other generators from the JHipster Marketplace? No
+
+
+WARNING! You have selected Oracle database.
+Please follow our documentation on using Oracle to set up the
+Oracle proprietary JDBC driver.
+
+Server application generated successfully.
+
+Run your Spring Boot application:
+ ./mvnw (mvnw if using Windows Command Prompt)
+
+Client application generated successfully.
+
+Start your Webpack development server with:
+ yarn start 
+ 
+**********************************************************************************
+How to start development?*********************************************************
+**********************************************************************************
+As we are working with the microservice architecture which can have has many database as the number of microservices
+but for now we are also using concept of distributed system in with there is a centralized database.
+
+Skip step 1 if you have already created a user in database, if it's a pluggable database please open the database only because
+its is mendatory to open database before working with pluggable database. Please follow steps i] to vi] in order to open pluggable 
+database. i.e "xelpdb" is the pluggable database 
+
+1. create a user in ORACLE12C to work in it.
+if you are using pluggable database please open/create a pluggable database
+--> i]   -> cmd
+--> ii]  -> sqlplus
+--> iii] -> user-name : sys as sysdba
+--> iv]  -> password : system
+--> v]   -> alter session set container = xelpdb;
+--> vi]  -> alter pluggable database xelpdb open;
+--> vii] -> create user itob identified by itob account unlock;
+--> viii]->grant dba to itob;
+
+This a high level description for working with Oracle12c database for complete details please follow the document 
+path : /knowloedge-base
+
+2. update the oracle12c configuration entries in these files
+
+--> path : \src\main\resources\config 
+--> Files --> [application-dev.yml , application-prod.yml]
+
+datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:oracle:thin:@//localhost:1521/xelpdb
+        username: itob
+        password: itob 
+
+3. Last setp is to add the oracle12c jdbc jar in the .m2 folder [if you have already added this jar please skip this step]
+--> Download the jdbc7 jar from http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html
+--> Place this jar file where ever you like but i.e [C:\\OracleJDBC\\ojdbc7.jar] now run the below command
+--> mvn install:install-file -Dfile=C:\\OracleJDBC\\ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 -Dversion=12.1.0.2 -Dpackaging=jar
+--> for more information please see the [Working with ORACLE12C.pdf] document
+
+4. Now simply open this project in intellij and start working
+
+**********************************************************************************
+How to run this microservice-gateway?*****************************************************
+**********************************************************************************
+
+Please make sure the jhipster-registry is already up.
+As the JHipster Registry has the responsibility to configure, monitor and scale your microservices and gateways
+
+Registry can be found in path : /registry 
+Follow the instructions described in README.info to run according to profile [dev, prod]
+
+Run your Spring Boot application:
+ ./mvnw (mvnw if using Windows Command Prompt)
+ 
+mvn -Pprod spring-boot:run -Drun.arguments="--server.port=9000,--spring.profiles.active=prod"
+OR
+mvn spring-boot:run -Drun.arguments="--server.port=9000"
+
+Note : 
+1. we can have any port but be sure the port is not already consumed
+2. Database is already open if the database is pluggable 
+3. if Database is not up the service will not start
+
+**********************************************************************************
+How to open pluggable database?***************************************************
+**********************************************************************************
+
+Please follow the docment Working with ORACLE12C.pdf this file can be found under knowloedge base project
+
+ 
